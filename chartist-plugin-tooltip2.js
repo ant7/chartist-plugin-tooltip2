@@ -130,6 +130,7 @@
                 var meta;
                 var value;
                 var textMarkup = options.template;
+                var seriesName;
 
                 clearTimeout(hideDelayTimer);
 
@@ -137,13 +138,19 @@
                     return;
                 }
 
-                meta = Chartist.deserialize(triggerElement.getAttribute('ct:meta'));
-                value = (typeof options.valueTransformFunction === 'function') ? options.valueTransformFunction.call(chart, value) : triggerElement.getAttribute('ct:value');
+                seriesName = triggerElement.parentNode.getAttribute('ct:series-name');
 
-                // Remove the hover class from the currently active triggers
+                meta = Chartist.deserialize(triggerElement.getAttribute('ct:meta'));
+                value = triggerElement.getAttribute('ct:value');
+                if (typeof options.valueTransformFunction === 'function') {
+                    value = options.valueTransformFunction.call(chart, value);
+                }
+
+                // Remove the hover class and the aria-describedby attribute from the currently active triggers
                 var activeTriggerElements = chart.container.querySelectorAll('.' + hoverClass);
                 Array.prototype.forEach.call(activeTriggerElements, function(activeTriggerElement) {
                     activeTriggerElement.classList.remove(hoverClass);
+                    activeTriggerElement.removeAttribute('aria-describedby');
                 });
 
                 // add hover class to the current active trigger
@@ -154,15 +161,19 @@
                 // replace all known {{}} occurences with their respective values
                 if (meta && typeof meta === 'object') {
                     for (var metaKey in meta) {
-                        textMarkup = textMarkup.replace(new RegExp('{{' + metaKey + '}}', 'gi'), meta[metaKey]);
+                        textMarkup = textMarkup.replace(new RegExp('{{' + metaKey + '}}', 'gi'), meta[metaKey] || '');
                     }
                 } else {
-                    textMarkup.replace('{{meta}}', meta);
+                    textMarkup = textMarkup.replace(new RegExp('{{meta}}', 'gi'), meta || '');
                 }
 
-                textMarkup = textMarkup.replace(new RegExp('{{value}}', 'gm'), value);
-                tooltipElement.innerHTML = textMarkup;
+                // series name
+                textMarkup = textMarkup.replace(new RegExp('{{seriesName}}', 'gi'), seriesName || '');
 
+                // value
+                textMarkup = textMarkup.replace(new RegExp('{{value}}', 'gi'), value);
+
+                tooltipElement.innerHTML = textMarkup;
                 tooltipElement.removeAttribute('hidden');
                 setTooltipPosition(triggerElement);
             }
