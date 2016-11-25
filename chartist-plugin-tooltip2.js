@@ -26,8 +26,8 @@
         valueTransformFunction: null,
 
         // use an already existing element as a template for the tooltip
-        // the content of the element must be a Mustache-styled template
-        // {{value}} {{meta.<...>}}
+        // the content of the element must be a Mustache-style template
+        // {{value}} {{metaElement}}
         elementTemplateSelector: null,
 
         // Markup to use as a template for the content of the tooltip

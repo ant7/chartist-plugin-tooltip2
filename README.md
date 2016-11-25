@@ -50,8 +50,8 @@ offset: {
 valueTransformFunction: null,
 
 // Use an already existing element as a template for the tooltip
-// the template must contain at least the value element (cssClass + --value)
-// it can also contain the meta element (cssClass + --meta)
+// the content of the element must be a Mustache-style template
+// {{value}} {{metaElement}}
 elementTemplateSelector: null,
 
 // Markup to use as a template for the content of the tooltip
