@@ -1,0 +1,47 @@
+/**
+ * Chartist.js plugin to display a tooltip on top of a chart.
+ * @author  Antonia Ciocodeica
+ * @version 0.1 22 Nov 2016
+ */
+.chartist-tooltip {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+    display: block;
+    padding: 1em 2em;
+    visibility: hidden;
+    transform: translateY(3em);
+    opacity: 0;
+    border-radius: 0.25em;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 0.5em rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease-in-out;
+}
+    .chartist-tooltip:not([hidden]) {
+        visibility: visible;;
+        transform: none;
+        opacity: 1;
+    }
+
+    /* Tooltip arrow */
+    .chartist-tooltip::before {
+        content: '\25BC';
+        position: absolute;
+        left: calc(50% - .5em);
+        top: 100%;
+        z-index: -1;
+        font-size: 1.3em;
+        line-height: .5em;
+        font-family: Arial, sans-serif;
+        color: rgba(255, 255, 255, 0.9);
+        transform: scaleY(0.7);
+        text-shadow: 0 0.25em 0.35em rgba(0, 0, 0, 0.1);
+    }
+        .chartist-tooltip--left::before {
+            left: 0.75em;
+        }
+        .chartist-tooltip--right::before {
+            left: auto;
+            right: 0.75em;
+        }
