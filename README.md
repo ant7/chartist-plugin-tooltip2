@@ -11,7 +11,27 @@ A chartist plugin that adds a tooltip to each point, slice or bar on your chart.
 * the value can be formatted (eg: to currency) using the option `valueTransformFunction`
 
 
-##Options
+## Install
+If you use Bower, run `bower install chartist-plugin-tooltip2`.
+Otherwise, copy `chartist-plugin-tooltip2.js` and `chartist-plugin-tooltip2.css` and add them to your page.
+
+```javascript
+var chart = new Chartist.Line('.ct-chart', {
+    labels: [1, 2, 3, 4, 5, 6, 7],
+    series: [
+        [1, 5, 3, 4, 6, 2, 3],
+        [2, 4, 2, 5, 4, 3, 6]
+    ]
+}, {
+    plugins: [
+        Chartist.plugins.tooltip2({
+            // your options here (see bellow)
+        })
+  ]
+});
+```
+
+## Options
 ```javascript
 // the namespace css class to use for the tooltips
 cssClass: 'chartist-tooltip',
