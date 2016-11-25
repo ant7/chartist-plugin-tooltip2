@@ -1,7 +1,7 @@
 /**
  * Chartist.js plugin to display a tooltip on top of a chart.
  * @author  Antonia Ciocodeica
- * @version 0.1 22 Nov 2016
+ * @version 0.3 25 Nov 2016
  */
 (function(window, document, Chartist) {
     'use strict';
@@ -26,9 +26,12 @@
         valueTransformFunction: null,
 
         // use an already existing element as a template for the tooltip
-        // the template must contain at least the value element (cssClass + --value)
-        // it can also contain the name element (cssClass + --name)
+        // the content of the element must be a Mustache-styled template
+        // {{value}} {{meta.<...>}}
         elementTemplateSelector: null,
+
+        // Markup to use as a template for the content of the tooltip
+        template: '<p>{{meta}}: {{value}}</p>',
 
         hideDelay: 500,
 
@@ -56,10 +59,10 @@
             var triggerSelector = getTriggerSelector();
             var hoverClass = getDefaultTriggerClass() + '--hover';
             var tooltipElement = getTooltipElement();
-            var tooltipNameElement = tooltipElement.querySelector('.' + options.cssClass + '-name');
-            var tooltipValueElement = tooltipElement.querySelector('.' + options.cssClass + '-value');
             var pointValues = getPointValues();
             var hideDelayTimer;
+
+            options.template = tooltipElement.innerHTML;
 
             init();
 
@@ -69,15 +72,15 @@
             function init() {
 
                 // set the initial position for the tooltip (top / left corner of the chart container)
-                setTooltipPosition(chart.container);
+                setTooltipPosition(chart.container, true);
 
 
                 // Offer support for multiple series line charts
                 if (chart instanceof Chartist.Line) {
                     chart.container.addEventListener('mousemove', function(e) {
                         var boxData = this.getBoundingClientRect();
-                        var currentXPosition = e.pageX - (boxData.left + document.body.scrollLeft);
-                        var currentYPosition = e.pageY - (boxData.top + document.body.scrollTop);
+                        var currentXPosition = e.pageX - (boxData.left + (document.documentElement.scrollLeft || document.body.scrollLeft));
+                        var currentYPosition = e.pageY - (boxData.top + (document.documentElement.scrollTop || document.body.scrollTop));
                         var closestPointOnX = getClosestNumberFromArray(currentXPosition, pointValues);
 
                         var pointElements = chart.container.querySelectorAll('.' + chart.options.classNames.point + '[x1="' + closestPointOnX + '"]');
@@ -124,11 +127,18 @@
              * @param Element triggerElement
              */
             function showTooltip(triggerElement) {
+                var meta;
+                var value;
+                var textMarkup = options.template;
+
                 clearTimeout(hideDelayTimer);
 
                 if (!triggerElement) {
                     return;
                 }
+
+                meta = Chartist.deserialize(triggerElement.getAttribute('ct:meta'));
+                value = (typeof options.valueTransformFunction === 'function') ? options.valueTransformFunction.call(chart, value) : triggerElement.getAttribute('ct:value');
 
                 // Remove the hover class from the currently active triggers
                 var activeTriggerElements = chart.container.querySelectorAll('.' + hoverClass);
@@ -139,21 +149,21 @@
                 // add hover class to the current active trigger
                 triggerElement.classList.add(hoverClass);
 
-                setTooltipPosition(triggerElement, true);
-
                 triggerElement.setAttribute('aria-describedby', options.id);
+
+                // replace all known {{}} occurences with their respective values
+                if (meta && typeof meta === 'object') {
+                    for (var metaKey in meta) {
+                        textMarkup = textMarkup.replace(new RegExp('{{' + metaKey + '}}', 'gi'), meta[metaKey]);
+                    }
+                } else {
+                    textMarkup.replace('{{meta}}', meta);
+                }
+
+                textMarkup = textMarkup.replace(new RegExp('{{value}}', 'gm'), value);
+                tooltipElement.innerHTML = textMarkup;
+
                 tooltipElement.removeAttribute('hidden');
-
-                if (tooltipNameElement) {
-                    tooltipNameElement.textContent = triggerElement.getAttribute('ct:name');
-                }
-
-                var value = triggerElement.getAttribute('ct:value');
-                if (typeof options.valueTransformFunction === 'function') {
-                    value = options.valueTransformFunction.call(chart, value);
-                }
-                tooltipValueElement.textContent = value;
-
                 setTooltipPosition(triggerElement);
             }
 
@@ -208,12 +218,7 @@
                 }
 
                 if (!tooltipTemplateElement) {
-                    var tooltipNameElement = document.createElement('p');
-                    var tooltipValueElement = document.createElement('p');
-                    tooltipNameElement.className = options.cssClass + '-name';
-                    tooltipValueElement.className = options.cssClass + '-value';
-                    tooltipElement.appendChild(tooltipNameElement);
-                    tooltipElement.appendChild(tooltipValueElement);
+                    tooltipElement.innerHTML = options.template;
                 }
 
                 tooltipElement.classList.add(options.cssClass);
@@ -324,18 +329,6 @@
                 return pointValues;
             }
 
-            /**
-             * Get the closest number from an array
-             * @param Int/Float number
-             * @param Array array
-             * @return Int The value from the array that is closest to the number
-             */
-            function getClosestNumberFromArray(number, array) {
-                return array.reduce(function (previous, current) {
-                    return (Math.abs(current - number) < Math.abs(previous - number) ? current : previous);
-                });
-            }
-
         }
     };
 
@@ -370,6 +363,19 @@
         if (matchesFunction) {
             return matchesFunction.call(el, selector);
         }
+    }
+
+
+    /**
+     * Get the closest number from an array
+     * @param Int/Float number
+     * @param Array array
+     * @return Int The value from the array that is closest to the number
+     */
+    function getClosestNumberFromArray(number, array) {
+        return array.reduce(function (previous, current) {
+            return (Math.abs(current - number) < Math.abs(previous - number) ? current : previous);
+        });
     }
 
 }(window, document, Chartist));
