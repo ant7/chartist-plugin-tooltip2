@@ -21,13 +21,13 @@
 
         // Value transform function
         // It receives a single argument that contains the current value
-        // "this" is the current chart 
+        // "this" is the current chart
         // It must return the formatted value to be added in the tooltip (eg: currency format)
         valueTransformFunction: null,
 
         // use an already existing element as a template for the tooltip
         // the template must contain at least the value element (cssClass + --value)
-        // it can also contain the meta element (cssClass + --meta)
+        // it can also contain the name element (cssClass + --name)
         elementTemplateSelector: null,
 
         hideDelay: 500,
@@ -56,7 +56,7 @@
             var triggerSelector = getTriggerSelector();
             var hoverClass = getDefaultTriggerClass() + '--hover';
             var tooltipElement = getTooltipElement();
-            var tooltipMetaElement = tooltipElement.querySelector('.' + options.cssClass + '-meta');
+            var tooltipNameElement = tooltipElement.querySelector('.' + options.cssClass + '-name');
             var tooltipValueElement = tooltipElement.querySelector('.' + options.cssClass + '-value');
             var pointValues = getPointValues();
             var hideDelayTimer;
@@ -144,8 +144,8 @@
                 triggerElement.setAttribute('aria-describedby', options.id);
                 tooltipElement.removeAttribute('hidden');
 
-                if (tooltipMetaElement) {
-                    tooltipMetaElement.textContent = triggerElement.getAttribute('ct:meta');
+                if (tooltipNameElement) {
+                    tooltipNameElement.textContent = triggerElement.getAttribute('ct:name');
                 }
 
                 var value = triggerElement.getAttribute('ct:value');
@@ -208,11 +208,11 @@
                 }
 
                 if (!tooltipTemplateElement) {
-                    var tooltipMetaElement = document.createElement('p');
+                    var tooltipNameElement = document.createElement('p');
                     var tooltipValueElement = document.createElement('p');
-                    tooltipMetaElement.className = options.cssClass + '-meta';
+                    tooltipNameElement.className = options.cssClass + '-name';
                     tooltipValueElement.className = options.cssClass + '-value';
-                    tooltipElement.appendChild(tooltipMetaElement);
+                    tooltipElement.appendChild(tooltipNameElement);
                     tooltipElement.appendChild(tooltipValueElement);
                 }
 
