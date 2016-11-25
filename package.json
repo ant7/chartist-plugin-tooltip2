@@ -1,6 +1,6 @@
 {
   "name": "chartist-plugin-tooltip2",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "A chartist plugin that adds a tooltip to each point, slice or bar on your chart.",
   "main": "chartist-plugin-tooltip2.js",
   "scripts": {
