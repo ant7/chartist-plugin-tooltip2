@@ -13,6 +13,7 @@ A chartist plugin that adds a tooltip to each point, slice or bar on your chart.
 
 ## Install
 If you use Bower, run `bower install chartist-plugin-tooltip2`.
+
 Otherwise, copy `chartist-plugin-tooltip2.js` and `chartist-plugin-tooltip2.css` and add them to your page.
 
 ```javascript
@@ -52,6 +53,9 @@ valueTransformFunction: null,
 // the template must contain at least the value element (cssClass + --value)
 // it can also contain the meta element (cssClass + --meta)
 elementTemplateSelector: null,
+
+// Markup to use as a template for the content of the tooltip
+template: '<p>{{meta}}: {{value}}</p>',
 
 // The delay before hiding the tooltip after the mouse has left the point, slice or bar
 hideDelay: 500,
