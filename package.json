@@ -1,0 +1,26 @@
+{
+  "name": "chartist-plugin-tooltip2",
+  "version": "0.0.1",
+  "description": "A chartist plugin that adds a tooltip to each point, slice or bar on your chart.",
+  "main": "chartist-plugin-tooltip2.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "chartist",
+    "chartist-plugin",
+    "chartist-tooltip",
+    "plugin",
+    "tooltip"
+  ],
+  "author": "Antonia Ciocodeica",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ant7/chartist-plugin-tooltip2.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ant7/chartist-plugin-tooltip2/issues"
+  },
+  "homepage": "https://github.com/ant7/chartist-plugin-tooltip2#readme"
+}

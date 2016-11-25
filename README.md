@@ -1,6 +1,6 @@
 # Chartist Tooltip plugin
 
-A chartist tooltip plugin that adds a tooltip to each point, slice or bar on your chart.
+A chartist plugin that adds a tooltip to each point, slice or bar on your chart.
 
 ## Features
 * adds a hover state (a css class) for each point, slice or bar (depending on your chart type), which can be styled according to your needs
