@@ -70,6 +70,9 @@
              * Initialize the tooltip
              */
             function init() {
+                if (!chart.container) {
+                    return;
+                }
 
                 // set the initial position for the tooltip (top / left corner of the chart container)
                 setTooltipPosition(chart.container, true);
@@ -131,6 +134,12 @@
                 var value;
                 var textMarkup = options.template;
                 var seriesName;
+                var seriesGroup;
+                var seriesIndex;
+                var valueGroup;
+                var valueIndex;
+
+                var seriesData;
 
                 clearTimeout(hideDelayTimer);
 
@@ -140,8 +149,16 @@
 
                 seriesName = triggerElement.parentNode.getAttribute('ct:series-name');
 
-                meta = Chartist.deserialize(triggerElement.getAttribute('ct:meta'));
-                value = triggerElement.getAttribute('ct:value');
+                seriesGroup = Array.prototype.slice.call(triggerElement.parentNode.parentNode.children);
+                seriesIndex = seriesGroup.indexOf(triggerElement.parentNode);
+                valueGroup = Array.prototype.slice.call(triggerElement.parentNode.parentNode.querySelectorAll('.' + getDefaultTriggerClass()))
+                valueIndex = valueGroup.indexOf(triggerElement);
+
+                seriesData = chart.data.series[seriesIndex];
+                seriesData = (!Array.isArray(seriesIndex) && typeof seriesIndex == 'object') ? seriesIndex.data : seriesData;
+                meta = seriesData[valueIndex].meta;
+                value = seriesData[valueIndex].value;
+
                 if (typeof options.valueTransformFunction === 'function') {
                     value = options.valueTransformFunction.call(chart, value);
                 }
