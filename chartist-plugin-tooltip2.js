@@ -138,6 +138,7 @@
                 var seriesIndex;
                 var valueGroup;
                 var valueIndex;
+                var itemData;
 
                 var seriesData;
 
@@ -151,13 +152,20 @@
 
                 seriesGroup = Array.prototype.slice.call(triggerElement.parentNode.parentNode.children);
                 seriesIndex = seriesGroup.indexOf(triggerElement.parentNode);
-                valueGroup = Array.prototype.slice.call(triggerElement.parentNode.parentNode.querySelectorAll('.' + getDefaultTriggerClass()))
+
+                valueGroup = Array.prototype.slice.call(triggerElement.parentNode.querySelectorAll('.' + getDefaultTriggerClass()))
                 valueIndex = valueGroup.indexOf(triggerElement);
 
                 seriesData = chart.data.series[seriesIndex];
-                seriesData = (!Array.isArray(seriesIndex) && typeof seriesIndex == 'object') ? seriesIndex.data : seriesData;
-                meta = seriesData[valueIndex].meta;
-                value = seriesData[valueIndex].value;
+                seriesData = (!Array.isArray(seriesData) && typeof seriesData == 'object' && seriesData.data) ? seriesData.data : seriesData;
+
+                itemData = (!Array.isArray(seriesData) && typeof seriesData == 'object') ? seriesData : seriesData[valueIndex];
+                if (!itemData) {
+                    return;
+                }
+
+                meta = itemData.meta;
+                value = itemData.value;
 
                 if (typeof options.valueTransformFunction === 'function') {
                     value = options.valueTransformFunction.call(chart, value);
