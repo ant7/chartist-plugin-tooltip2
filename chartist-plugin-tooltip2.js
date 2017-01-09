@@ -300,7 +300,7 @@
                 var height = tooltipElement.offsetHeight;
 
                 var boxData = relativeElement.getBoundingClientRect();
-                var left = boxData.left + window.scrollX - width / 2 + options.offset.x;
+                var left = boxData.left + window.scrollX + options.offset.x - width / 2 + boxData.width / 2;
                 var top = boxData.top + window.scrollY - height + options.offset.y;
 
                 // Minimum horizontal collision detection
