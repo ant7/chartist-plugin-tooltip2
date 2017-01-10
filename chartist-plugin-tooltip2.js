@@ -151,6 +151,7 @@
                 seriesName = triggerElement.parentNode.getAttribute('ct:series-name');
 
                 seriesGroup = Array.prototype.slice.call(triggerElement.parentNode.parentNode.children);
+                seriesGroup = chart.options.reverseData ? seriesGroup.reverse() : seriesGroup;
                 seriesIndex = seriesGroup.indexOf(triggerElement.parentNode);
 
                 valueGroup = Array.prototype.slice.call(triggerElement.parentNode.querySelectorAll('.' + getDefaultTriggerClass()))
