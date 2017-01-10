@@ -135,6 +135,7 @@
                 var textMarkup = options.template;
                 var seriesName;
                 var seriesGroup;
+                var seriesAlphaIndex;
                 var seriesIndex;
                 var valueGroup;
                 var valueIndex;
@@ -151,13 +152,21 @@
                 seriesName = triggerElement.parentNode.getAttribute('ct:series-name');
 
                 seriesGroup = Array.prototype.slice.call(triggerElement.parentNode.parentNode.children);
-                seriesGroup = chart.options.reverseData ? seriesGroup.reverse() : seriesGroup;
-                seriesIndex = seriesGroup.indexOf(triggerElement.parentNode);
+
+                // get series index by using the classname (eg: ct-series-a = index 0)
+                seriesAlphaIndex = Array.prototype.find.call(triggerElement.parentNode.classList, function(element) {
+                    return element === chart.options.classNames.series ? false : true;
+                });
+
+                seriesAlphaIndex = seriesAlphaIndex.replace(chart.options.classNames.series + '-', '').toLowerCase();
+                seriesIndex = seriesAlphaIndex.charCodeAt() - 96 - 1;
 
                 valueGroup = Array.prototype.slice.call(triggerElement.parentNode.querySelectorAll('.' + getDefaultTriggerClass()))
                 valueIndex = valueGroup.indexOf(triggerElement);
 
-                seriesData = chart.data.series[seriesIndex];
+                // clone the series array
+                seriesData = chart.data.series.slice(0);
+                seriesData = chart.options.reverseData ? seriesData.reverse()[seriesIndex] : seriesData[seriesIndex];
                 seriesData = (!Array.isArray(seriesData) && typeof seriesData == 'object' && seriesData.data) ? seriesData.data : seriesData;
 
                 itemData = (!Array.isArray(seriesData) && typeof seriesData == 'object') ? seriesData : seriesData[valueIndex];
