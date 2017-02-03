@@ -16,7 +16,7 @@
         },
         offsetCollision: {
             x: 20,
-            y: 0, // vertical collision not yet implemented
+            y: 0, // vertical collision not implemented
         },
 
         // Value transform function
@@ -25,8 +25,8 @@
         // It must return the formatted value to be added in the tooltip (eg: currency format)
         valueTransformFunction: null,
 
-        // use an already existing element as a template for the tooltip
-        // the content of the element must be a Mustache-style template
+        // Use an already existing element as a template for the tooltip.
+        // The content of the element must be a Mustache-style template
         // {{value}} {{metaElement}}
         elementTemplateSelector: null,
 
@@ -34,6 +34,10 @@
         template: '<p>{{meta}}: {{value}}</p>',
 
         hideDelay: 500,
+
+        // If you choose to reverse the original order of the chart elements in
+        // the DOM, you must set this to true
+        dataDrawnReversed: false,
 
         // only if a custom element is used for the trigger (TODO: test)
         triggerSelector: null,
@@ -134,8 +138,7 @@
                 var value;
                 var textMarkup = options.template;
                 var seriesName;
-                var seriesGroup;
-                var seriesAlphaIndex;
+                var seriesGroups;
                 var seriesIndex;
                 var valueGroup;
                 var valueIndex;
@@ -150,16 +153,8 @@
                 }
 
                 seriesName = triggerElement.parentNode.getAttribute('ct:series-name');
-
-                seriesGroup = Array.prototype.slice.call(triggerElement.parentNode.parentNode.children);
-
-                // get series index by using the classname (eg: ct-series-a = index 0)
-                seriesAlphaIndex = Array.prototype.find.call(triggerElement.parentNode.classList, function(element) {
-                    return element === chart.options.classNames.series ? false : true;
-                });
-
-                seriesAlphaIndex = seriesAlphaIndex.replace(chart.options.classNames.series + '-', '').toLowerCase();
-                seriesIndex = seriesAlphaIndex.charCodeAt() - 96 - 1;
+                seriesGroups = Array.prototype.slice.call(triggerElement.parentNode.parentNode.children);
+                seriesIndex = options.dataDrawnReversed ? seriesGroups.reverse().indexOf(triggerElement.parentNode) : seriesGroups.indexOf(triggerElement.parentNode);
 
                 valueGroup = Array.prototype.slice.call(triggerElement.parentNode.querySelectorAll('.' + getDefaultTriggerClass()))
                 valueIndex = valueGroup.indexOf(triggerElement);
@@ -170,6 +165,7 @@
                 seriesData = (!Array.isArray(seriesData) && typeof seriesData == 'object' && seriesData.data) ? seriesData.data : seriesData;
 
                 itemData = (!Array.isArray(seriesData) && typeof seriesData == 'object') ? seriesData : seriesData[valueIndex];
+
                 if (!itemData) {
                     return;
                 }
