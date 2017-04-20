@@ -59,7 +59,7 @@
 
             // simple unique id for the tooltip element (needed to be able to
             // add aria-describedby to the trigger while the tooltip is visible)
-            options.id = options.id || 'charttooltip-' + startId;
+            options.id = 'charttooltip-' + startId;
             var triggerSelector = getTriggerSelector();
             var hoverClass = getDefaultTriggerClass() + '--hover';
             var tooltipElement = getTooltipElement();
@@ -189,6 +189,9 @@
 
                 triggerElement.setAttribute('aria-describedby', options.id);
 
+                // value
+                textMarkup = textMarkup.replace(new RegExp('{{value}}', 'gi'), value);
+
                 // replace all known {{}} occurences with their respective values
                 if (meta && typeof meta === 'object') {
                     for (var metaKey in meta) {
@@ -200,9 +203,6 @@
 
                 // series name
                 textMarkup = textMarkup.replace(new RegExp('{{seriesName}}', 'gi'), seriesName || '');
-
-                // value
-                textMarkup = textMarkup.replace(new RegExp('{{value}}', 'gi'), value);
 
                 tooltipElement.innerHTML = textMarkup;
                 tooltipElement.removeAttribute('hidden');
