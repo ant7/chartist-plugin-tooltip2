@@ -6,6 +6,7 @@
 (function(window, document, Chartist) {
     'use strict';
 
+
     var startId = 0;
 
     var publicOptions = {
@@ -78,44 +79,20 @@
                     return;
                 }
 
+                // set attribute on the container, so external scripts can detect the tooltip element
+                chart.container.setAttribute('data-charttooltip-id', options.id);
+
                 // set the initial position for the tooltip (top / left corner of the chart container)
                 setTooltipPosition(chart.container, true);
 
-
                 // Offer support for multiple series line charts
                 if (chart instanceof Chartist.Line) {
-                    chart.container.addEventListener('mousemove', function(e) {
-                        var boxData = this.getBoundingClientRect();
-                        var currentXPosition = e.pageX - (boxData.left + (document.documentElement.scrollLeft || document.body.scrollLeft));
-                        var currentYPosition = e.pageY - (boxData.top + (document.documentElement.scrollTop || document.body.scrollTop));
-                        var closestPointOnX = getClosestNumberFromArray(currentXPosition, pointValues);
-
-                        var pointElements = chart.container.querySelectorAll('.' + chart.options.classNames.point + '[x1="' + closestPointOnX + '"]');
-                        var pointElement;
-
-                        if (pointElements.length <= 1) {
-                            pointElement = pointElements[0];
-                        } else {
-                            var yPositions = [];
-                            var closestPointOnY;
-
-                            Array.prototype.forEach.call(pointElements, function(point) {
-                                yPositions.push(point.getAttribute('y1'));
-                            });
-
-                            closestPointOnY = getClosestNumberFromArray(currentYPosition, yPositions);
-                            pointElement = chart.container.querySelector('.' + chart.options.classNames.point + '[x1="' + closestPointOnX + '"][y1="' + closestPointOnY + '"]');
-                        }
-
-                        if (!pointElement || matches(pointElement, '.' + hoverClass)) {
-                            return;
-                        }
-
-                        showTooltip(pointElement);
-                    });
-                    chart.container.addEventListener('mouseleave', function(e) {
-                        var pointElement = chart.container.querySelector('.' + chart.options.classNames.point + '--hover');
-                        hideTooltip(pointElement);
+                    chart.on('created', function() {
+                        chart.container.querySelector('svg').addEventListener('mousemove', prepareLineTooltip);
+                        chart.container.addEventListener('mouseleave', function(e) {
+                            var pointElement = chart.container.querySelector('.' + chart.options.classNames.point + '--hover');
+                            hideTooltip(pointElement);
+                        });
                     });
 
                     return;
@@ -127,6 +104,42 @@
                 chart.container.addEventListener('mouseout', delegate(triggerSelector, function(e) {
                     hideTooltip(e.target);
                 }));
+            }
+
+
+            /**
+             * Prepare line tooltip
+             * Calculates the closest point on the line according to the current position of the mouse
+             * @param Event e
+             */
+            function prepareLineTooltip(e) {
+                var boxData = this.getBoundingClientRect();
+                var currentXPosition = e.pageX - (boxData.left + (document.documentElement.scrollLeft || document.body.scrollLeft));
+                var currentYPosition = e.pageY - (boxData.top + (document.documentElement.scrollTop || document.body.scrollTop));
+                var closestPointOnX = getClosestNumberFromArray(currentXPosition, pointValues);
+
+                var pointElements = chart.container.querySelectorAll('.' + chart.options.classNames.point + '[x1="' + closestPointOnX + '"]');
+                var pointElement;
+
+                if (pointElements.length <= 1) {
+                    pointElement = pointElements[0];
+                } else {
+                    var yPositions = [];
+                    var closestPointOnY;
+
+                    Array.prototype.forEach.call(pointElements, function(point) {
+                        yPositions.push(point.getAttribute('y1'));
+                    });
+
+                    closestPointOnY = getClosestNumberFromArray(currentYPosition, yPositions);
+                    pointElement = chart.container.querySelector('.' + chart.options.classNames.point + '[x1="' + closestPointOnX + '"][y1="' + closestPointOnY + '"]');
+                }
+
+                if (!pointElement || matches(pointElement, '.' + hoverClass)) {
+                    return;
+                }
+
+                showTooltip(pointElement);
             }
 
             /**
@@ -163,6 +176,10 @@
                 seriesData = chart.data.series.slice(0);
                 seriesData = chart.options.reverseData ? seriesData.reverse()[seriesIndex] : seriesData[seriesIndex];
                 seriesData = (!Array.isArray(seriesData) && typeof seriesData == 'object' && seriesData.data) ? seriesData.data : seriesData;
+
+                if (!seriesData) {
+                    return;
+                }
 
                 itemData = (!Array.isArray(seriesData) && typeof seriesData == 'object') ? seriesData : seriesData[valueIndex];
 
