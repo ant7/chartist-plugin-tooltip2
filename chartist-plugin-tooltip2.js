@@ -186,7 +186,7 @@
                     seriesGroups = Array.prototype.slice.call(triggerElement.parentNode.parentNode.children);
                     seriesIndex = options.dataDrawnReversed ? seriesGroups.reverse().indexOf(triggerElement.parentNode) : seriesGroups.indexOf(triggerElement.parentNode);
 
-                    valueGroup = Array.prototype.slice.call(triggerElement.parentNode.querySelectorAll('.' + getDefaultTriggerClass()))
+                    valueGroup = Array.prototype.slice.call(triggerElement.parentNode.querySelectorAll('.' + getDefaultTriggerClass()));
                     valueIndex = valueGroup.indexOf(triggerElement);
 
                     // clone the series array
@@ -440,7 +440,6 @@
                 return matchesFunction.call(el, selector);
             }
         }
-
 
         /**
          * Get the closest number from an array
