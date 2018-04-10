@@ -19,6 +19,7 @@
     transition: transform 0.2s ease-in-out;
 }
     .chartist-tooltip:not([hidden]) {
+        margin: 0;
         visibility: visible;;
         transform: none;
         opacity: 1;
