@@ -105,6 +105,10 @@
                     // Offer support for multiple series line charts
                     if (chart instanceof Chartist.Line) {
                         chart.on('created', function() {
+                            if (pointValues.length === 0) {
+                                return;
+                            }
+
                             chart.container.querySelector('svg').addEventListener('mousemove', prepareLineTooltip);
                             chart.container.addEventListener('mouseleave', function(e) {
                                 var pointElement = chart.container.querySelector('.' + chart.options.classNames.point + '--hover');
