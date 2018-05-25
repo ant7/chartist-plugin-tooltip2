@@ -12,6 +12,40 @@ A chartist plugin that adds a tooltip to each point, slice or bar on your chart.
 
 
 ## Install
+
+### ES6
+
+**package.json**
+
+```json
+{
+    "dependencies": {
+        "chartist-plugin-tooltip2": "https://github.com/ant7/chartist-plugin-tooltip2/tarball/2684ea61614ea04c8ca1cfcded05e2ddc34b4485"
+    }
+}
+```
+
+**module.js**
+
+```js
+import Chartist from "chartist";
+import tooltip2 from "chartist-plugin-tooltip2";
+
+new Chartist.Line('.ct-chart', {
+    labels: [1, 2, 3, 4, 5, 6, 7],
+    series: [
+        [1, 5, 3, 4, 6, 2, 3],
+        [2, 4, 2, 5, 4, 3, 6]
+    ]
+}, {
+    plugins: [tooltip2({
+        // your options here (see below)
+    })],
+});
+```
+
+### Global
+
 If you use Bower, run `bower install chartist-plugin-tooltip2`.
 
 Otherwise, copy `chartist-plugin-tooltip2.js` and `chartist-plugin-tooltip2.css` and add them to your page.
@@ -26,7 +60,7 @@ var chart = new Chartist.Line('.ct-chart', {
 }, {
     plugins: [
         Chartist.plugins.tooltip2({
-            // your options here (see bellow)
+            // your options here (see below)
         })
   ]
 });
